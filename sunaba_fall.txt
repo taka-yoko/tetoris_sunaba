@@ -1,0 +1,17 @@
+memory[55001] -> 1
+
+def drawSquare(y, x, color)
+  i -> 0
+  while i < 4
+      j -> 0
+      while j < 4 
+          memory[60000 + (y * 500) + (x * 5) + (i * 100) + j] -> color
+          j -> j + 1
+      i -> i + 1
+
+i -> 0
+while i < 20
+  drawSquare(i, 0, 999999)
+  memory[55000] -> 1
+  drawSquare(i, 0, 0)
+  i -> i + 1

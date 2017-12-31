@@ -1,0 +1,147 @@
+# 初期化処理
+fallCount -> 0
+memory[55001] -> 1
+drawWallAndBottom()
+x -> 5
+y -> 0
+preLeft  -> memory[50006]
+preRight -> memory[50007]
+
+# テスト用
+# delete_test()
+
+# ループ処理
+while 0 < 1
+  curLeft  -> memory[50006]
+  curRight -> memory[50007]
+  x_move -> 0
+  y_move -> 0
+  # キーが連続で押されていなければ移動
+  if (curLeft = 1) * (preLeft = 0)
+    x_move -> -1
+  if (curRight = 1) * (preRight = 0)
+    x_move -> 1
+  preLeft  -> curLeft
+  preRight -> curRight
+  # fallCount（落ちるスピードの調整）
+  fallCount -> fallCount + 1
+  if fallCount >= 4
+    y_move -> 1
+    fallCount -> 0
+  # 移動を反映
+  x -> x + x_move
+  y -> y + y_move
+  # 四角に重なっていれば
+  if overlapped?(x, y)
+    # 戻す
+    x -> x - x_move
+    y -> y - y_move
+    # 縦移動量が0より多く、斜め移動でなければ積もらせる
+    if (y_move > 0) * (x_move = 0)
+      drawAndDeleteSquare(x, y)
+      x -> 5
+      y -> 0
+  moveSquare(x, y)
+
+###########################
+# 関数
+###########################
+
+# 四角を描く
+def drawSquare(x, y, color)
+  i -> 0
+  while i < 4
+      j -> 0
+      while j < 4 
+          memory[60000 + (y * 500) + (x * 5) + (i * 100) + j] -> color
+          j -> j + 1
+      i -> i + 1
+
+# 両側の壁を描く
+def drawWall()
+  y -> 0
+  while y < 20
+    # 両側の壁のマッピングと四角の描画
+    map_and_draw(0, y)
+    map_and_draw(11, y)
+    y -> y + 1
+
+# 底を描く
+def drawBottom()
+  x -> 0
+  while x < 11
+    # 底のマッピングと四角の描画
+    map_and_draw(x, 19)
+    x -> x + 1
+
+# 両側の壁と底を一度に描く
+def drawWallAndBottom()
+  drawWall()
+  drawBottom()
+
+# 四角のマッピングと描画
+def map_and_draw(x, y)
+  memory[100 + (y * 12) + x] -> 1
+  drawSquare(x, y, 999999)
+
+# 四角のマッピングと削除
+def map_and_delete(x, y)
+  memory[100 + (y * 12) + x] -> 0
+  drawSquare(x, y, 0)
+
+# 列が埋まっていれば消す
+def deleteSquare(y)
+  delete? -> 1
+  x -> 1
+  while x < 11
+    delete? -> delete? * memory[100 + (y * 12) + x] = 1
+    x -> x + 1
+  if delete?
+    x -> 1
+    while x < 11
+      map_and_delete(x, y)
+      x -> x + 1
+    moveUpwardBlock(y)
+
+# ずらす
+def moveUpwardBlock(y)
+  while y > 1
+    x -> 1
+    while x < 11
+      if memory[100 + ((y - 1) * 12) + x] = 1
+        map_and_delete(x, y-1)
+        map_and_draw(x, y)
+      x -> x + 1
+    y -> y - 1
+
+# 積もらせて列を消す
+def drawAndDeleteSquare(x, y)
+  # 積もる（マッピング処理と四角描画）
+  map_and_draw(x, y)
+  map_and_draw((x + 1), y)
+  # 行が揃っていれば消す
+  deleteSquare(y)
+
+# 四角を動かす
+def moveSquare(x, y)
+  drawSquare(x, y, 990000)
+  drawSquare((x + 1), y, 990000)
+  memory[55000] -> 1
+  drawSquare(x, y, 0)
+  drawSquare((x + 1), y, 0)
+
+# 重なっているかの判定
+def overlapped?(x, y)
+  out -> (memory[100 + (y * 12) + x] = 1) +
+  (memory[100 + (y * 12) + (x + 1)] = 1)
+
+# 列を消すテスト用の状態を作成するメソッド
+def delete_test()
+  test_y -> 1
+  while test_y < 19
+    test_x -> 1
+    while test_x < 11
+      if test_x != 5
+        map_and_draw(test_x, test_y)
+      test_x -> test_x + 1
+    test_y -> test_y + 1

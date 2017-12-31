@@ -1,0 +1,45 @@
+memory[55001] -> 1
+x0 -> 5
+y0 -> 1
+circleState -> 0
+preUpState -> memory[50004]
+preDownState -> memory[50005]
+while 1
+  x1 -> x0
+  y1 -> y0
+  currentUpState  -> memory[50004]
+  currentDownState -> memory[50005]
+
+  if circleState = 0
+    x1 -> x0 + 1
+  if circleState = 1
+    y1 -> y1 + 1
+  if circleState = 2
+    x1 -> x1 - 1
+  if circleState = 3
+    y1 -> y1 - 1
+  if (currentUpState = 1) * (preUpState = 0)
+    circleState -> circleState + 1
+    if circleState = 4
+      circleState -> 0
+  drawSquare(x0, y0, 990000)
+  drawSquare(x1, y1, 990000)
+  memory[55000] -> 1
+  drawSquare(x0, y0, 0)
+  drawSquare(x1, y1, 0)
+  preUpState  -> currentUpState
+  preDownState -> currentDownState
+
+###########################
+# 関数
+###########################
+
+# 四角を描く
+def drawSquare(x, y, color)
+  i -> 0
+  while i < 4
+      j -> 0
+      while j < 4 
+          memory[60000 + (y * 500) + (x * 5) + (i * 100) + j] -> color
+          j -> j + 1
+      i -> i + 1

@@ -1,0 +1,7 @@
+x -> 0
+preState -> 0
+while 0 < 1
+  memory[60000 + x] -> 999999
+  currentState -> 1 - preState
+  x -> x + currentState
+  preState -> currentState

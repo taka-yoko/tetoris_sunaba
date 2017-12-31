@@ -1,0 +1,5 @@
+x -> 0
+while 0 < 1
+  memory[60000 + x] -> 999999
+  if x mod 3 = 0
+  x -> x + 1

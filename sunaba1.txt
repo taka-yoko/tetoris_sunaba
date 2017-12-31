@@ -1,0 +1,46 @@
+# 手加減オフ
+memory[55001] -> 1
+# 定数
+WHITECOLOR -> 999999
+BLACKCOLOR -> 0
+REDCOLOR -> 990000
+
+drawWall(WHITECOLOR)
+
+# 落下プログラム
+memory[55001] -> 1
+i -> 0
+while i < 19
+  drawSquare(i, 5, REDCOLOR)
+  memory[55000] -> 1
+  drawSquare(i, 5, BLACKCOLOR)
+  i -> i + 1
+
+
+####################
+# 四角を描く
+####################
+def drawSquare(y, x, color)
+  i -> 0
+  while i < 4
+      j -> 0
+      while j < 4 
+          memory[60000 + (y * 500) + (x * 5) + (i * 100) + j] -> color
+          j -> j + 1
+      i -> i + 1
+
+#################
+# 壁を描く
+#################
+def drawWall(color)
+  # 横壁描画
+  i -> 0
+  while i < 20
+    drawSquare(i, 0, color)
+    drawSquare(i, 11, color)
+    i -> i + 1
+  # 底描画
+  i -> 1
+  while i < 11
+    drawSquare(19, i, color)
+    i -> i + 1

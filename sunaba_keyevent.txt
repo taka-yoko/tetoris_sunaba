@@ -1,0 +1,21 @@
+memory[55001] -> 1
+ud -> 0
+lr -> 0
+while 0 < 1
+  ud -> ud + memory[50005] - memory[50004]
+  lr -> lr + memory[50007] - memory[50006]
+  drawSquare(ud, lr, 999999)
+  memory[55000] -> 1
+  drawSquare(ud, lr, 0)
+
+####################
+# 四角を描く
+####################
+def drawSquare(y, x, color)
+  i -> 0
+  while i < 4
+      j -> 0
+      while j < 4 
+          memory[60000 + (y * 500) + (x * 5) + (i * 100) + j] -> color
+          j -> j + 1
+      i -> i + 1

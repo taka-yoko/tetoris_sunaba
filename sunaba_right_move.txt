@@ -1,0 +1,12 @@
+memory[55001] -> 1
+lr -> 0
+previousState -> 0
+while 0 < 1
+  if (memory[50007] = 1) * (previousState = 0)
+    lr -> lr + memory[50007] 
+    previousState -> 1
+  if  (memory[50007] = 0) * (previousState = 1)
+    previousState -> 0
+  memory[60000 + lr] -> 999999
+  memory[55000] -> 1 
+  memory[60000 + lr] -> 0
