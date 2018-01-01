@@ -2,15 +2,17 @@
 fallCount -> 0
 memory[55001] -> 1
 drawWallAndBottom()
+makeCiclePattern()
 x -> 5
-y -> 0
+y -> 1
 c -> 0
+k -> 0
 preLeft  -> memory[50006]
 preRight -> memory[50007]
 preUp    -> memory[50004]
 
 # テスト用
-delete_test()
+# delete_test()
 
 # ループ処理
 while 0 < 1
@@ -40,18 +42,19 @@ while 0 < 1
   y -> y + y_move
   c -> c + c_move
   # 四角に重なっていれば
-  if overlapped?(x, y, c)
+  if overlapped?(x, y, c, k)
     # 戻す
     x -> x - x_move
     y -> y - y_move
     c -> c - c_move
     # 縦移動量が0より多く、斜め移動でなければ積もらせる
     if (y_move > 0) * (x_move = 0)
-      drawAndDeleteSquare(x, y, c)
+      drawAndDeleteSquare(x, y, c, k)
       x -> 5
-      y -> 0
+      y -> 1
       c -> 0
-  moveSquare(x, y, c)
+      k -> 1 - k
+  moveSquare(x, y, c, k)
 
 ###########################
 # 関数
@@ -132,45 +135,60 @@ def moveUpwardBlock(y)
     y -> y - 1
 
 # 積もらせて列を消す
-def drawAndDeleteSquare(x, y, c)
-  calcPosition(x, y, c)
+def drawAndDeleteSquare(x, y, c, k)
+  calcPosition(x, y, c, k)
   # 積もる（マッピング処理と四角描画）
   map_and_draw(memory[0], memory[1])
   map_and_draw(memory[2], memory[3])
+  map_and_draw(memory[4], memory[5])
   # 行が揃っていれば消す
   deleteSquare()
 
 # 四角を動かす
-def moveSquare(x, y, c)
-  calcPosition(x, y, c)
+def moveSquare(x, y, c, k)
+  calcPosition(x, y, c, k)
   drawSquare(memory[0], memory[1], 990000)
   drawSquare(memory[2], memory[3], 990000)
+  drawSquare(memory[4], memory[5], 990000)
   memory[55000] -> 1
   drawSquare(memory[0], memory[1], 0)
   drawSquare(memory[2], memory[3], 0)
+  drawSquare(memory[4], memory[5], 0)
 
 # 重なっているかの判定
-def overlapped?(x, y, c)
-  calcPosition(x, y, c)
+def overlapped?(x, y, c, k)
+  calcPosition(x, y, c, k)
   out -> (memory[100 + (memory[1] * 12) + memory[0]] = 1) +
-  (memory[100 + (memory[3] * 12) + memory[2]] = 1)
+  (memory[100 + (memory[3] * 12) + memory[2]] = 1) +
+  (memory[100 + (memory[5] * 12) + memory[4]] = 1)
 
 # マス目位置を計算
-def calcPosition(x, y, c)
+def calcPosition(x, y, c, k)
+  if c > 3
+    c -> 3
   memory[0] -> x
   memory[1] -> y
-  x_move -> 0
-  y_move -> 0
-  if c = 0
-    x_move -> 1
-  if c = 1
-    y_move -> 1
-  if c = 2
-    x_move -> -1
-  if c >= 3
-    y_move -> -1
-  memory[2] -> x + x_move
-  memory[3] -> y + y_move
+  start -> 500 + (k * 16) + (c * 4)
+  memory[2] -> x + memory[start + 0]
+  memory[3] -> y + memory[start + 1]
+  memory[4] -> x + memory[start + 2]
+  memory[5] -> y + memory[start + 3]
+
+def makeCiclePattern()
+  setMemory(500,  1,  0, -1,  0)
+  setMemory(504,  0,  1,  0, -1)
+  setMemory(508, -1,  0,  1,  0)
+  setMemory(512,  0, -1,  0,  1)
+  setMemory(516,  1,  0,  0, -1)
+  setMemory(520,  0,  1,  1,  0)
+  setMemory(524, -1,  0,  0,  1)
+  setMemory(528,  0, -1, -1,  0)
+
+def setMemory(start, n0, n1, n2, n3)
+  memory[start + 0] -> n0
+  memory[start + 1] -> n1
+  memory[start + 2] -> n2
+  memory[start + 3] -> n3
 
 # 列を消すテスト用の状態を作成するメソッド
 def delete_test()
